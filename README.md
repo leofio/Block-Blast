@@ -7,14 +7,17 @@ Currently in the foundational stage, this repository provides a highly optimized
 ## Core Features
 
 * **Matrix-Based State:** The 8x8 game board is represented as a 2D numpy array (1s for solid blocks, 0s for empty space), easily flattened into a tensor for neural networks.
-* **Complex Shape Logic:** Fully supports irregular structural silhouettes (like L-shapes) using transparent bounding box matrices.
-* **3-Shape Hand Mechanic:** Accurately replicates the official game's logic where the agent is dealt a hand of 3 random shapes and must place them all before a refill.
+* **Comprehensive Shape Library:** Fully supports all 33 standard Block Blast shapes and their rotational variants (including irregular structural silhouettes like L, T, and Z shapes).
+* **Weighted Shape Generation:** Accurately simulates real gameplay drop rates by assigning a rare 1% probability to smaller pieces (1x1, 1x2, 1x3).
+* **3-Shape Hand Mechanic:** Replicates the official game's logic where the agent is dealt a hand of 3 random shapes and must place them all before a refill.
+* **Dual-Mode Execution:** Built with an flexible `ai_mode` parameter. Enforces strict game-over termination for agent training to prevent infinite loops, but allows lenient continuation for human CLI testing.
 * **Line Clearing & Reward Signal:** Automatically detects and clears full rows and columns, calculating a structured reward signal (exponential scaling for combo clears) to guide agent behavior.
-* **CLI Test Mode:** Includes a fully playable command-line interface to manually verify gravity, overlaps, and game-over states.
 
 ## Current Architecture
 
-* `main.py`: The core environment script containing the `BlockBlastEnv` class and the CLI game loop.
+* `main.py`: The core mathematical environment containing the `BlockBlastEnv` class.
+* `block_list.py`: A dedicated configuration file storing the library of 33 standard shape matrices and their structural logic.
+* `play.py`: A separate command-line interface (CLI) script for manual human testing.
 
 ## Installation
 
@@ -30,7 +33,7 @@ pip install numpy
 Before hooking up an agent, you can play the game in your terminal to ensure the environment mechanics feel correct:
 
 ```bash
-python main.py
+python play.py
 ```
 **Controls:**
 When prompted, enter your move as three numbers separated by spaces: `[hand_index] [row] [col]`
