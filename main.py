@@ -7,6 +7,7 @@ class BlockBlastEnv:
         self.grid_size = 8
         self.board = np.zeros((self.grid_size, self.grid_size), dtype=int)
         self.score = 0
+        self.current_streak = 0
         
         self.shapes = block_list
 
@@ -63,12 +64,19 @@ class BlockBlastEnv:
 
         h, w = shape.shape
         self.board[row:row+h, col:col+w] += shape
+        area_of_block = np.sum(shape)
 
         self.hand[hand_index] = None
 
-        lines_cleared = self._clear_lines()
-        reward = 1 + (lines_cleared ** 2 * 10)  
+        no_lines_cleared, blocks_cleared = self._clear_lines()
+        multiplier = 1 + self.current_streak + no_lines_cleared
+        reward = (area_of_block + (10 * blocks_cleared)) * multiplier 
         self.score += reward
+
+        if no_lines_cleared > 0:
+            self.current_streak += 1
+        else:
+            self.current_streak = 0
 
         if all(s is None for s in self.hand):
             self._refill_hand()
@@ -78,16 +86,22 @@ class BlockBlastEnv:
         return (self.board.copy(), self.hand.copy()), reward, done
     
     def _clear_lines(self):
-        """Finds full rows/columns, clears them, and returns the count."""
+        """Finds full rows/columns, clears them, and returns (lines_cleared, blocks_cleared)."""
         full_rows = np.where(self.board.sum(axis=1) == self.grid_size)[0]
         full_cols = np.where(self.board.sum(axis=0) == self.grid_size)[0]
+
+        r_count = len(full_rows)
+        c_count = len(full_cols)
+        no_lines_cleared = r_count + c_count
+        
+        blocks_cleared = (r_count * self.grid_size) + (c_count * self.grid_size) - (r_count * c_count)
 
         for r in full_rows:
             self.board[r, :] = 0
         for c in full_cols:
             self.board[:, c] = 0
 
-        return len(full_rows) + len(full_cols)
+        return no_lines_cleared, blocks_cleared
 
     def _check_game_over(self):
         """Returns True if NONE of the remaining shapes can be placed."""
