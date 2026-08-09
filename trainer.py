@@ -78,11 +78,11 @@ def train(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Training on device: {device}")
 
-    EPISODES = 1000
-    GAMMA = 0.99
-    BATCH_SIZE = 64
-    LR = 0.001
-    TARGET_UPDATE = 10
+    EPISODES = args.episodes
+    GAMMA = args.gamma
+    BATCH_SIZE = args.batch_size
+    LR = args.lr
+    TARGET_UPDATE = args.target_update
     EPSILON_START = 1.0
     EPSILON_END = 0.05
     EPSILON_DECAY_STEP = (EPSILON_START - EPSILON_END) / (EPISODES * 0.8)
