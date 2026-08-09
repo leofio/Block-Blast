@@ -42,7 +42,7 @@ When prompted, enter your move as three numbers separated by spaces: `[hand_inde
 
 *Example:* `0 4 2` (Plays the first shape in your hand at row 4, column 2).
 
-### Training the agent
+## Training the agent
 To start training the RL agent, run the `trainer.py` script. It accepts command-line arguments to easily customize the hyperparameter tuning without editing the code.
 
 ```python
