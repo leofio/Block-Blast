@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.optim as optim
 import numpy as np
 import random
+import argparse
 from collections import deque
 import copy
 from main import BlockBlastEnv
@@ -73,7 +74,7 @@ def get_valid_actions(env, state):
     return valid_actions
 
 
-def train():
+def train(args):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Training on device: {device}")
 
@@ -174,8 +175,21 @@ def train():
 
         epsilon = max(EPSILON_END, epsilon * EPSILON_DECAY)
 
-        if episode % 10 == 0:
+        if episode % 100 == 0:
             print(f"Episode {episode}, Total Reward: {total_reward}, Epsilon: {epsilon:.2f}")
 
 if __name__ == "__main__":
-    train()
+    parser = argparse.ArgumentParser(description="Train the Block Blast RL Agent")
+    
+    # Define the bash flags, their types, and default values
+    parser.add_argument("--episodes", type=int, default=1000, help="Number of games to play")
+    parser.add_argument("--lr", type=float, default=0.001, help="Learning rate for the optimizer")
+    parser.add_argument("--batch_size", type=int, default=64, help="Number of experiences to train on at once")
+    parser.add_argument("--gamma", type=float, default=0.99, help="Discount factor for future rewards")
+    parser.add_argument("--target_update", type=int, default=10, help="How often to update the target network")
+    
+    # Parse the commands and pass them into the train function
+    args = parser.parse_args()
+    
+    print(f"Starting training with settings: {vars(args)}")
+    train(args)
