@@ -85,7 +85,7 @@ def train(args):
     TARGET_UPDATE = 10
     EPSILON_START = 1.0
     EPSILON_END = 0.05
-    EPSILON_DECAY = 0.995
+    EPSILON_DECAY_STEP = (EPSILON_START - EPSILON_END) / (EPISODES * 0.8)
 
     env = BlockBlastEnv(ai_mode=True)
     policy_net = BlockBlastDQN().to(device)
@@ -173,7 +173,7 @@ def train(args):
         if episode % TARGET_UPDATE == 0:
             target_net.load_state_dict(policy_net.state_dict())
 
-        epsilon = max(EPSILON_END, epsilon * EPSILON_DECAY)
+        epsilon = max(EPSILON_END, epsilon - EPSILON_DECAY_STEP)
 
         if episode % 100 == 0:
             print(f"Episode {episode}, Total Reward: {total_reward}, Epsilon: {epsilon:.2f}")
