@@ -1,7 +1,7 @@
 # Block Blast ML Environment
 
 <p align="center">
-  <img src="assets/example.gif" width="600" alt="Block Blast AI Agent playing the game in terminal">
+  <img src="assets/example.gif" width="200" alt="Block Blast AI Agent playing the game in terminal">
 </p>
 
 A headless, state-based Python environment designed for training Reinforcement Learning (RL) agents to master *Block Blast*. 
