@@ -1,5 +1,9 @@
 # Block Blast ML Environment
 
+<p align="center">
+  <img src="assets/example.gif" width="600" alt="Block Blast AI Agent playing the game in terminal">
+</p>
+
 A headless, state-based Python environment designed for training Reinforcement Learning (RL) agents to master *Block Blast*. 
 
 Currently in the foundational stage, this repository provides a highly optimized, `numpy`-based game engine that simulates the core mechanics of Block Blast. The environment is specifically structured to output mathematical state spaces rather than pixels, making it ideal for deep learning and agent training.
