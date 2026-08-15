@@ -60,6 +60,12 @@ python trainer.py --episodes 10000 --batch_size 128 --lr 0.005
 
 * `--target_update`: How often to update the target network (default: 10).
 
+## Getting the agent to play
+
+```python
+python play_agent.py --model_path blockblast_best.pt --delay 0.25
+```
+
 ## Integrating custom logic
 The environment follows a standard step-based architecture. Ensure `ai_mode` is set to `True` (default) during training so invalid moves terminate the episode.
 
