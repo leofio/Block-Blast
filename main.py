@@ -32,15 +32,62 @@ class BlockBlastEnv:
         
         return self.board.copy(), self.hand.copy()
 
+    def _can_place_all(self, board_state, remaining_hand):
+        """
+        Recursively checks if there is at least one valid sequence to place 
+        all shapes in the remaining_hand on the given board_state.
+        """
+        if not remaining_hand:
+            return True
+            
+        for i, shape_idx in enumerate(remaining_hand):
+            shape = self.shapes[shape_idx]
+            h, w = shape.shape
+            
+            for r in range(self.grid_size - h + 1):
+                for c in range(self.grid_size - w + 1):
+                    if np.max(board_state[r:r+h, c:c+w] + shape) <= 1:
+                        
+                        new_board = board_state.copy()
+                        new_board[r:r+h, c:c+w] += shape
+                        
+                        full_rows = np.where(new_board.sum(axis=1) == self.grid_size)[0]
+                        full_cols = np.where(new_board.sum(axis=0) == self.grid_size)[0]
+                        for fr in full_rows:
+                            new_board[fr, :] = 0
+                        for fc in full_cols:
+                            new_board[:, fc] = 0
+                            
+                        next_hand = remaining_hand[:i] + remaining_hand[i+1:]
+                        if self._can_place_all(new_board, next_hand):
+                            return True
+                            
+        return False
+
     def _refill_hand(self):
-        """Fills the 3 slots with random shape indices."""
-        chosen_indices = np.random.choice(
-            len(self.shapes), 
-            size=3, 
-            replace=True, 
-            p=self.shape_weights
-        )
-        self.hand = chosen_indices.tolist()
+        """Fills the 3 slots with random shape indices, ensuring they can all be placed."""
+        max_attempts = 50 
+        
+        for attempt in range(max_attempts):
+            chosen_indices = np.random.choice(
+                len(self.shapes), 
+                size=3, 
+                replace=True, 
+                p=self.shape_weights
+            ).tolist()
+            
+            if np.sum(self.board) == 0:
+                self.hand = chosen_indices
+                return
+                
+            if self._can_place_all(self.board, chosen_indices):
+                self.hand = chosen_indices
+                return
+                
+        # If we couldn't find a playable hand after max_attempts, 
+        # the board is effectively dead. Deal the last generated hand 
+        # and let the standard game-over logic handle the termination.
+        self.hand = chosen_indices
 
     def is_valid_move(self, shape, row, col):
         """Checks if a shape can be placed at the given row/col."""
